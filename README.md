@@ -9,6 +9,7 @@ This project is a documentation chatbot that uses Langchain to process and retri
 - Stores document embeddings in Pinecone for efficient retrieval
 - Provides a Streamlit-based user interface for interacting with the chatbot
 - Supports monitoring and debugging with Langsmith
+- Uses Firecrawl to crawl the Salesforce developer website for documentation
 
 ## Getting Started
 
@@ -30,11 +31,11 @@ This project is a documentation chatbot that uses Langchain to process and retri
    ```bash
    OPENAI_API_KEY=your_api_key_here
    PINECONE_API_KEY=your_api_key_here
-   FIRECRAWL_API_KEY=your_api_key_here
    LANGCHAIN_TRACING_V2=true
    LANGCHAIN_API_KEY=your_langsmith_api_key_here
    LANGCHAIN_PROJECT=your_project_name_here
    ```
+   FIRECRAWL_API_KEY=your_api_key_here # if running ingestion.py
 
 4. Install Pipenv if you haven't already:
    ```bash

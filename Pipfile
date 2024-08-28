@@ -19,6 +19,7 @@ streamlit = "*"
 streamlit-chat = "*"
 tqdm = "*"
 pexpect = "*"
+langchain-community = "*"
 
 [dev-packages]
 
