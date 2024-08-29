@@ -1,9 +1,25 @@
-# Import necessary libraries and modules
 from typing import Set
-from consts import APP_HEADER
-from backend.core import run_llm
+
 import streamlit as st
 from streamlit_chat import message
+
+from consts import APP_HEADER
+from backend.core import run_llm
+
+
+# Function to create a formatted string of source URLs
+def create_sources_string(source_urls: Set[str]) -> str:
+    if not source_urls:
+        return ""
+    sources_list = list(source_urls)
+    sources_list.sort()
+    sources_string = "sources:\n"
+    for i, source in enumerate(sources_list):
+        source = source.replace('\\', '/')
+        sources_string += f"{i + 1}. [{source}]({source})\n"
+
+    return sources_string
+
 
 # Set up the Streamlit app header
 st.header(APP_HEADER)
@@ -20,21 +36,6 @@ if (
     st.session_state["chat_answers_history"] = []
     st.session_state["user_prompt_history"] = []
     st.session_state["chat_history"] = []
-
-
-# Function to create a formatted string of source URLs
-def create_sources_string(source_urls: Set[str]) -> str:
-    if not source_urls:
-        return ""
-    sources_list = list(source_urls)
-    sources_list.sort()
-    sources_string = "sources:\n"
-    for i, source in enumerate(sources_list):
-        source = source.replace('\\', '/')
-        sources_string += f"{i + 1}. [{source}]({source})\n"
-
-    return sources_string
-
 
 # Main logic for handling user input and generating responses
 if prompt:
