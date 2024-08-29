@@ -54,11 +54,6 @@ def run_llm(query: str, chat_history=None):
     return new_result
 
 
-def format_docs(docs):
-    """Format a list of documents into a single string."""
-    return "\n\n".join(doc.page_content for doc in docs)
-
-
 if __name__ == "__main__":
     # Test the run_llm function
     res = run_llm(query="What is the Models API ?")

@@ -45,7 +45,7 @@ def ingest_docs2() -> None:
         "https://developer.salesforce.com/docs/einstein/genai/guide/data-masking.html",
         "https://developer.salesforce.com/docs/einstein/genai/guide/toxicity-scoring.html",
     ]
-    langchain_documents_base_urls2 = [langchain_documents_base_urls[0]]   # test one
+    #langchain_documents_base_urls2 = [langchain_documents_base_urls[0]]   # test one
     for url in langchain_documents_base_urls:
         print(f"FireCrawling {url=}")
         loader = FireCrawlLoader(
