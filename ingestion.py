@@ -9,7 +9,7 @@ load_dotenv()
 
 embeddings = OpenAIEmbeddings(model="text-embedding-3-small")
 
-'''
+"""
 To run the ingestion script, follow these steps:
 Update the `INDEX_NAME` in the `consts.py` file to match the name of the Pinecone index you want to create.
 Update the `langchain_documents_base_urls` list in the `ingestion.py` file to include the URLs of the documentation 
@@ -28,7 +28,7 @@ Run the ingestion script to populate the Pinecone index:
    python ingestion.py
    ```
    This script will populate the Pinecone index with the required data.
-'''
+"""
 
 
 def ingest_docs2() -> None:
@@ -45,7 +45,7 @@ def ingest_docs2() -> None:
         "https://developer.salesforce.com/docs/einstein/genai/guide/data-masking.html",
         "https://developer.salesforce.com/docs/einstein/genai/guide/toxicity-scoring.html",
     ]
-    #langchain_documents_base_urls2 = [langchain_documents_base_urls[0]]   # test one
+    # langchain_documents_base_urls2 = [langchain_documents_base_urls[0]]   # test one
     for url in langchain_documents_base_urls:
         print(f"FireCrawling {url=}")
         loader = FireCrawlLoader(
@@ -61,9 +61,7 @@ def ingest_docs2() -> None:
 
         print(f"Going to add {len(docs)} documents to Pinecone")
         # Add documents to Pinecone vector store
-        PineconeVectorStore.from_documents(
-            docs, embeddings, index_name=INDEX_NAME
-        )
+        PineconeVectorStore.from_documents(docs, embeddings, index_name=INDEX_NAME)
         print(f"****Loading {url}* to vectorstore done ***")
         # Sleep a minute to avoid rate-limits
         time.sleep(60)

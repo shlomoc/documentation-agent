@@ -18,10 +18,10 @@ def run_llm(query: str, chat_history=None):
     if chat_history is None:
         chat_history = []
     embeddings = OpenAIEmbeddings(model="text-embedding-3-small")
-    
+
     # Create Pinecone vector store using the INDEX_NAME from consts.py
     docsearch = PineconeVectorStore(index_name=INDEX_NAME, embedding=embeddings)
-    
+
     # Initialize ChatOpenAI model
     chat = ChatOpenAI(verbose=True, temperature=0)
 
@@ -49,7 +49,7 @@ def run_llm(query: str, chat_history=None):
     new_result = {
         "query": result["input"],
         "result": result["answer"],
-        "source_documents": result["context"]
+        "source_documents": result["context"],
     }
     return new_result
 

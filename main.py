@@ -1,75 +1,89 @@
 from typing import Set
 
 import streamlit as st
-from streamlit_chat import message
 
 from consts import APP_HEADER
 from backend.core import run_llm
 
 
-# Function to create a formatted string of source URLs
 def create_sources_string(source_urls: Set[str]) -> str:
+    """
+    Create a formatted string of source URLs.
+
+    Args:
+    source_urls (Set[str]): A set of source URLs.
+
+    Returns:
+    str: A formatted string of numbered source URLs.
+    """
     if not source_urls:
         return ""
     sources_list = list(source_urls)
     sources_list.sort()
-    sources_string = "sources:\n"
+    sources_string = "Sources:\n"
     for i, source in enumerate(sources_list):
-        source = source.replace('\\', '/')
+        source = source.replace("\\", "/")
         sources_string += f"{i + 1}. [{source}]({source})\n"
-
     return sources_string
 
 
-# Set up the Streamlit app header
-st.header(APP_HEADER)
+def chat():
+    """
+    Main function to run the chat interface.
+    """
+    # Set the header of the Streamlit app
+    st.header(APP_HEADER)
 
-# Create an input field for the user's prompt
-prompt = st.text_input("Prompt", placeholder="Enter your prompt here..")
+    # Initialize chat history in session state if it doesn't exist
+    if "chat_history" not in st.session_state:
+        st.session_state.chat_history = []
 
-# Initialize session state variables if they don't exist
-if (
-    "chat_answers_history" not in st.session_state
-    and "user_prompt_history" not in st.session_state
-    and "chat_history" not in st.session_state
-):
-    st.session_state["chat_answers_history"] = []
-    st.session_state["user_prompt_history"] = []
-    st.session_state["chat_history"] = []
+    # Display existing chat history
+    for message in st.session_state.chat_history:
+        with st.chat_message(message["role"]):
+            st.markdown(message["content"])
 
-# Main logic for handling user input and generating responses
-if prompt:
-    with st.spinner("Generating response.."):
-        # Run the language model to generate a response
-        generated_response = run_llm(
-            query=prompt, chat_history=st.session_state["chat_history"]
+    # Get user input
+    if prompt := st.chat_input("Enter your prompt here.."):
+        # Add user message to chat history
+        st.session_state.chat_history.append({"role": "user", "content": prompt})
+
+        # Display user message
+        with st.chat_message("user"):
+            st.markdown(prompt)
+
+        # Generate and display AI response
+        with st.chat_message("assistant"):
+            with st.spinner("Generating response.."):
+                # Run the language model to generate a response
+                generated_response = run_llm(
+                    query=prompt,
+                    chat_history=[
+                        (msg["role"], msg["content"])
+                        for msg in st.session_state.chat_history
+                        if msg["role"] in ["human", "ai"]
+                    ],
+                )
+
+                # Extract source URLs from the response
+                sources = set(
+                    [
+                        doc.metadata["sourceURL"]
+                        for doc in generated_response["source_documents"]
+                    ]
+                )
+
+                # Format the response with the generated text and sources
+                formatted_response = f"{generated_response['result']}\n\n{create_sources_string(sources)}"
+
+                # Display the formatted response with clickable links
+                st.markdown(formatted_response, unsafe_allow_html=True)
+
+        # Add AI response to chat history
+        st.session_state.chat_history.append(
+            {"role": "assistant", "content": formatted_response}
         )
-        
-        # Extract source URLs from the response
-        sources = set(
-            [doc.metadata["sourceURL"] for doc in generated_response["source_documents"]]
-        )
-
-        # Format the response with the generated text and sources
-        formatted_response = (
-            f"{generated_response['result']} \n\n {create_sources_string(sources)}"
-        )
-
-        # Display the formatted response with clickable links
-        st.markdown(formatted_response, unsafe_allow_html=True)
-
-        # Update session state with the new interaction
-        st.session_state["user_prompt_history"].append(prompt)
-        st.session_state["chat_answers_history"].append(formatted_response)
-        st.session_state["chat_history"].append(("human", prompt))
-        st.session_state["chat_history"].append(("ai", generated_response["result"]))
 
 
-# Display the chat history
-if st.session_state["chat_answers_history"]:
-    for generated_response, user_query in zip(
-        st.session_state["chat_answers_history"],
-        st.session_state["user_prompt_history"],
-    ):
-        message(user_query, is_user=True)
-        message(generated_response)
+if __name__ == "__main__":
+    chat()
