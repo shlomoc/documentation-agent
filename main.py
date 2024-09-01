@@ -60,16 +60,14 @@ def chat():
                     query=prompt,
                     chat_history=[
                         (msg["role"], msg["content"])
-                        for msg in st.session_state.chat_history
-                        if msg["role"] in ["human", "ai"]
+                        for msg in st.session_state.chat_history if msg["role"] in ["human", "ai"]
                     ],
                 )
 
                 # Extract source URLs from the response
                 sources = set(
                     [
-                        doc.metadata["sourceURL"]
-                        for doc in generated_response["source_documents"]
+                        doc.metadata["sourceURL"] for doc in generated_response["source_documents"]
                     ]
                 )
 

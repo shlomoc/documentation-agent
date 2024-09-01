@@ -12,15 +12,21 @@ from consts import INDEX_NAME
 # Load environment variables
 load_dotenv()
 
+from functools import lru_cache
+
+# Create and cache the vector store
+@lru_cache(maxsize=1)
+def get_vector_store():
+    # This function will be called only once, and its result will be cached
+    embeddings = OpenAIEmbeddings(model="text-embedding-3-small")
+    return PineconeVectorStore(index_name=INDEX_NAME, embedding=embeddings)
 
 def run_llm(query: str, chat_history=None):
-    # Initialize OpenAI embeddings
     if chat_history is None:
         chat_history = []
-    embeddings = OpenAIEmbeddings(model="text-embedding-3-small")
-
-    # Create Pinecone vector store using the INDEX_NAME from consts.py
-    docsearch = PineconeVectorStore(index_name=INDEX_NAME, embedding=embeddings)
+    
+    # Use the cached vector store instead of creating a new one each time
+    docsearch = get_vector_store()
 
     # Initialize ChatOpenAI model
     chat = ChatOpenAI(verbose=True, temperature=0)
