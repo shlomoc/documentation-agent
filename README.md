@@ -15,7 +15,7 @@ This project is a documentation chatbot that uses Langchain to process and retri
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/shlomoc/documentation-chatbot.git
+   git clone https://github.com/shlomoc/documentation-agent.git
    ```
 
 2. Navigate to the project directory:
